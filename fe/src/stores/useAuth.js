@@ -26,7 +26,7 @@ export const useAuthStore = defineStore("auth", {
       }
       try {
         const response = await axiosClient.get("/auth/me");
-        this.setUser(response.data);
+        this.setUser(response);
         return response.data;
       } catch (error) {
         return null;

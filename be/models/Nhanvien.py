@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String
-from schemas.base import Base
+from models.base import Base
 
 class Nhanvien(Base):
     __tablename__ = "nhanvien"

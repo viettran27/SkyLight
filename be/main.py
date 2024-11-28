@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
-from fastapi_sqlalchemy import DBSessionMiddleware
 from starlette.middleware.cors import CORSMiddleware
+from db.base import MultiDBMiddleware
 from config.config import settings
 from controller.router import router
 
@@ -14,7 +14,7 @@ def get_application() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    application.add_middleware(DBSessionMiddleware, db_url=settings.DATABASE_URL)
+    application.add_middleware(MultiDBMiddleware)
     application.include_router(router, prefix=settings.API_PREFIX)
 
     return application

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 from repository.auth import AuthRepository
-from models.User import User
-from models.Auth import Token
+from schemas.User import User
+from schemas.Auth import Token
 from config.config import settings
 
 router = APIRouter()

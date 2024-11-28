@@ -1,7 +1,11 @@
 <script setup>
-	import { Search, Plus, Trash } from 'lucide-vue-next';
+	import { ref, reactive } from 'vue';
+	import { useRouter } from 'vue-router'
+	import { Search, Plus } from 'lucide-vue-next';
+	import TableRequest from '@/components/ui-custom/TableRequest.vue';
+	import DialogRequest from '@/components/ui-custom/DialogRequest.vue';
 
-	const requests = [
+	const fake_request = [
 		{
 			ID: 'IED_01',
 			Thoi_gian_yeu_cau: '20/11/2024 15:20',
@@ -11,7 +15,7 @@
 			Trang_thai: "Đang đợi duyệt"
 		},
 		{
-			ID: 'IED_01',
+			ID: 'IED_02',
 			Thoi_gian_yeu_cau: '20/11/2024 15:20',
 			Truong_BP_duyet: '20/11/2024 15:20',
 			Ke_toan_phe_duyet: '20/11/2024 15:20',
@@ -19,7 +23,7 @@
 			Trang_thai: "Đang đợi duyệt"
 		},
 		{
-			ID: 'IED_01',
+			ID: 'IED_03',
 			Thoi_gian_yeu_cau: '20/11/2024 15:20',
 			Truong_BP_duyet: '20/11/2024 15:20',
 			Ke_toan_phe_duyet: '20/11/2024 15:20',
@@ -27,6 +31,53 @@
 			Trang_thai: "Đang đợi duyệt"
 		},
 	]
+
+	const INIT_REQUEST = {
+		Ten_PR: "",
+		Muc_dich: "",
+		Ngay_can: ""
+	}
+
+	const dialog = reactive({
+		open: false,
+		status: 'add'
+	})
+	const requests = ref(fake_request)
+	const dialogValue = ref(INIT_REQUEST)
+
+	const router = useRouter()
+
+	const handleOpenDialog = () => {
+		dialog.open = true
+		dialog.status = "add"
+	}
+
+	const handleCloseDialog = () => {
+		dialog.open = false
+		dialogValue.value = INIT_REQUEST
+	}
+
+	const handleSaveDialog = () => {
+		switch (dialog.status) {
+			case "update":
+				dialog.open = false
+				break;
+		
+			default:
+				router.push("/requests/IED_01")
+				break;
+		}
+	}
+
+	const handleUpdateRequest = (id) => {
+		dialog.open = true
+		dialog.status = "update"
+		dialogValue.value = requests.value.find(request => request.ID === id)
+	}
+
+	const handleDeleteRequest = (id) => {
+		requests.value = requests.value.filter(request => request.ID !== id)
+	}
 </script>
 
 <template>
@@ -70,45 +121,25 @@
 						</SelectContent>
 					</Select>
 				</div>
-				<Button>
+				<Button @click="handleOpenDialog">
 					<Plus class="mr-1" />
 					Thêm mới
 				</Button>
 			</div>
 			<div class="mt-5">
-				<Table>
-					<TableHeader>
-						<TableRow>
-							<TableHead class="w-[100px]">STT</TableHead>
-							<TableHead>ID</TableHead>
-							<TableHead>Thời gian tạo</TableHead>
-							<TableHead>Thời gian trưởng bp duyệt</TableHead>
-							<TableHead>Thời gian kế toán phê duyệt</TableHead>
-							<TableHead>Thời gian blđ phê duyệt</TableHead>
-							<TableHead>Trạng thái</TableHead>
-							<TableHead></TableHead>
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						<TableRow v-for="(request, index) in requests" :key="request.ID">
-							<router-link :to="`requests/${request.ID}`" class="contents">
-								<TableCell>{{ index + 1 }}</TableCell>
-								<TableCell>{{ request.ID }}</TableCell>
-								<TableCell>{{ request.Thoi_gian_yeu_cau }}</TableCell>
-								<TableCell>{{ request.Truong_BP_duyet }}</TableCell>
-								<TableCell>{{ request.Ke_toan_phe_duyet }}</TableCell>
-								<TableCell>{{ request.BLD_phe_duyet }}</TableCell>
-								<TableCell>{{ request.Trang_thai }}</TableCell>
-							</router-link>
-							<TableCell>
-									<div v-if="request.Trang_thai === 'Đang đợi duyệt'">
-										<Trash color="red" :size="20"/>
-									</div>
-							</TableCell>
-						</TableRow>
-					</TableBody>
-				</Table>
+				<TableRequest 
+					:value="requests"
+					@update-request="handleUpdateRequest"
+					@delete-request="handleDeleteRequest"
+				/>
 			</div>
 		</div>
+		<DialogRequest 
+			:open="dialog.open"
+			:status="dialog.status"
+			:value="dialogValue"
+			@close-dialog="handleCloseDialog"
+			@save-dialog="handleSaveDialog"
+		/>
 	</div>
 </template>

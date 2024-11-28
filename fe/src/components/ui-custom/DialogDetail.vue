@@ -14,12 +14,12 @@
 
   const title = computed(() => {
     switch (status) {
-      case "edit":
-        return "Sửa yêu cầu"
+      case "update":
+        return "Sửa vật liệu"
       case "view":
-        return "Chi tiết yêu cầu"
+        return "Chi tiết vật liệu"
       default:
-        return "Thêm yêu cầu"
+        return "Thêm vật liệu"
     }
   })
 

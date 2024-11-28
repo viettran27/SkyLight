@@ -1,5 +1,14 @@
 <script setup>
-import { AlignJustify, Bell } from 'lucide-vue-next';
+	import { AlignJustify, Bell } from 'lucide-vue-next';
+	import { useAuthStore } from '@/stores/useAuth';
+	import { useRouter } from 'vue-router'
+
+	const authStore = useAuthStore()
+	const router = useRouter()
+	const logout = () => {
+		authStore.logout();	
+		router.push("/login")
+	}
 </script>
 
 <template>
@@ -15,7 +24,7 @@ import { AlignJustify, Bell } from 'lucide-vue-next';
 						></div>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
-						<DropdownMenuItem>Đăng xuất</DropdownMenuItem>
+						<DropdownMenuItem @click="logout">Đăng xuất</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</div>

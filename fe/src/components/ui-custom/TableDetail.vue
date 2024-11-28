@@ -1,5 +1,5 @@
 <script setup>
-  import { Edit, Trash, Pencil } from "lucide-vue-next"
+  import { Trash, Pencil } from "lucide-vue-next"
   import { defineProps, computed } from "vue"
   import { useAuthStore } from "@/stores/useAuth";
   
@@ -18,8 +18,10 @@
     return money.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
   }
 
-  const canViewMoney = computed(() => {
-    return authStore.user?.skylight !== 'req' && authStore.user?.skylight !== 'hod'
+  const canViewMoney = computed(() => {   
+    return  authStore.user?.skylight && 
+            authStore.user?.skylight !== 'req' && 
+            authStore.user?.skylight !== 'hod'
   })
 </script>
 

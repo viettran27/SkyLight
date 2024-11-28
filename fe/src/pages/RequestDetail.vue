@@ -64,7 +64,7 @@
 
   const handleEdit = (index, material) => {
     dialog.open = true
-    dialog.status = "edit"
+    dialog.status = "update"
     dialog.rowIndex = index
     dialogValue.value = structuredClone(toRaw(material))
   }
@@ -83,7 +83,7 @@
   const handleSaveDialog = () => {
     const value = toValue(dialogValue)
     switch (dialog.status) {
-      case "edit":
+      case "update":
         tableValue.value[dialog.rowIndex] = value
         break;
     

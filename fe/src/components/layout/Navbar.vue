@@ -17,6 +17,7 @@ watch(
 const navbar = [
 	{
 		type: 'collapse',
+		open: true,
 		icon: Package,
 		name: 'Vật liệu',
 		children: [
@@ -52,7 +53,7 @@ const navbar = [
 		<div class="px-3 py-3 mt-3">
 			<div v-for="(item, index) in navbar" :key="index" class="menu">
 				<div v-if="item.type === 'collapse'">
-					<Collapsible>
+					<Collapsible :defaultOpen="item?.open">
 						<CollapsibleTrigger
 							class="flex justify-between items-center w-full px-4"
 						>
@@ -69,7 +70,7 @@ const navbar = [
 									:key="index"
 									:class="
 										cn(
-											currentPath === child.href &&
+											currentPath.includes(child.href) &&
 												'bg-gray-300',
 											'py-2 px-4 ml-2 mr-4 rounded-lg',
 										)
@@ -91,7 +92,7 @@ const navbar = [
 						<div
 							:class="
 								cn(
-									currentPath === item.href && 'bg-gray-300',
+									currentPath.includes(item.href) && 'bg-gray-300',
 									'flex gap-2 py-3 px-4 w-full cursor-pointer rounded-lg',
 								)
 							"

@@ -1,8 +1,9 @@
 from fastapi import HTTPException
+from sqlalchemy.orm import Session
 from fastapi.responses import JSONResponse
 from services.auth import AuthService
-from models.User import User, UserInfo
-from models.Auth import Token
+from schemas.User import User, UserInfo
+from schemas.Auth import Token
 from config.config import settings
 import datetime
 import jwt
