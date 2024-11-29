@@ -1,10 +1,11 @@
 <script setup>
 	import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
-	import { useRouter } from 'vue-router'
-	import { Search, Plus } from 'lucide-vue-next';
+
 	import { axiosClient } from '@/lib/axios';
 	import { useAuthStore } from '@/stores/useAuth';
-	import { debounce } from 'lodash';
+	import { useRouter } from 'vue-router'
+
+	import { Search, Plus } from 'lucide-vue-next';
 	import TableRequest from '@/components/ui-custom/TableRequest.vue';
 	import DialogRequest from '@/components/ui-custom/DialogRequest.vue';
 
@@ -14,43 +15,19 @@
 		Ngay_can: ""
 	}
 
-	const { user } = defineProps({ user: Object })
+	const { user, requests } = defineProps({ 
+		user: Object,
+		requests: Array,
+	})
+	const emits = defineEmits(["getData", "handleSearch"])
+
+	const router = useRouter()
 
 	const dialog = reactive({
 		open: false,
 		status: 'add',
 		value: INIT_REQUEST
 	})
-	const requests = ref([])
-	const search = ref("")
-
-	const router = useRouter()
-
-	const getData = () => {
-		axiosClient.get(`/requests?phong_ban=${user.phongban}`)
-		.then(data => {
-			requests.value = data
-		})
-	}
-
-	onMounted(() => {
-		getData()
-	})
-
-	const handleSearch = (value) => {
-		if (value) {
-			axiosClient.get(`/requests/search?ma_pr=${value}`)
-			.then(data => {
-				requests.value = data
-			})
-		} else {
-			getData()
-		}
-	};
-
-	const handleDebouncedSearch = debounce(() => {
-		handleSearch(search.value);
-	}, 300); 
 
 	const handleOpenDialog = () => {
 		dialog.open = true
@@ -77,7 +54,7 @@
 				axiosClient.put(`/requests/${dialog.value.Ma_PR}`, data)
 				.then(() => {
 					dialog.open = false
-					getData()
+					emits("getData")
 				})
 				break;
 		
@@ -99,13 +76,10 @@
 	const handleDeleteRequest = (ma_pr) => {
 		axiosClient.delete(`/requests/${ma_pr}`)
 		.then(() => {
-			getData()
+			emits("getData")
 		})
 	}
 
-	onBeforeUnmount(() => {
-		handleDebouncedSearch.cancel();
-	});
 </script>
 
 <template>
@@ -119,8 +93,7 @@
 					<Input
 						id="search"
 						type="text"
-						v-model="search"
-						@input="handleDebouncedSearch"
+						@input="$emit('handleSearch', $event.target.value)"
 						placeholder="Nhập tên mã PR"
 						class="pl-10"
 					/>

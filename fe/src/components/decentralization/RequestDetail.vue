@@ -1,9 +1,7 @@
 <script setup>
   import { reactive, ref, toRaw, toValue, onMounted, onBeforeUnmount } from 'vue'
 
-  import { useRoute } from "vue-router"
-  import { axiosClient } from "@/lib/axios"
-  import { debounce } from "lodash"
+  import { axiosClient } from '@/lib/axios'
   import { isApprove } from '@/utils'
 
   import { Search, Plus, ChevronRight } from 'lucide-vue-next'
@@ -21,37 +19,12 @@
     status: "add",
     value: INIT_DIALOG
   })
-  const tableValue = ref([])
-  const search = ref("")
-  
-  const route = useRoute()
-  const id_pr = route.params.id
 
-  const getData = () => {
-    axiosClient.get(`/request_details?ma_pr=${id_pr}`)
-    .then(data => {
-      tableValue.value = data
-    })
-  }
-
-  onMounted(() => {
-    getData()
+  const { details, id_pr } = defineProps({ 
+    details: Array,
+    id_pr: String
   })
-
-  const handleSearch = (value) => {
-		if (value) {
-			axiosClient.get(`/request_details/search?ma_pr=${id_pr}&ma_vat_tu=${value}`)
-			.then(data => {
-				tableValue.value = data
-			})
-		} else {
-			getData()
-		}
-	};
-
-	const handleDebouncedSearch = debounce(() => {
-		handleSearch(search.value);
-	}, 300); 
+  const emits = defineEmits(["getData", "handleSearch"])
 
   const handleAddDetail = () => {
     dialog.open = true
@@ -74,7 +47,7 @@
   const handleDeleteDetail = (id) => {
     axiosClient.delete(`/request_details/${id}`)
     .then(() => {
-      getData()
+      emits("getData")
     })
   }
 
@@ -94,13 +67,9 @@
         break;
     }
 
-    getData()
+    emits("getData")
     dialog.open = false
   }
-
-  onBeforeUnmount(() => {
-		handleDebouncedSearch.cancel();
-	});
 </script>
 
 <template>
@@ -117,8 +86,7 @@
         <Input
           id="search"
           type="text"
-          v-model="search"
-          @input="handleDebouncedSearch"
+          @input="$emits('handleSearch', $event.target.value)"
           placeholder="Nhập mã vật liệu"
           class="pl-10"
         />
@@ -135,7 +103,7 @@
     </div>
     <div class="bg-white flex-1 pb-3 overflow-auto">
       <TableDetail
-        :value="tableValue"
+        :value="details"
         @edit-detail="handleEdit"
         @view-detail="handleViewDetail"
         @delete-detail="handleDeleteDetail"

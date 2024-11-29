@@ -1,53 +1,25 @@
 <script setup>
   import { ref, reactive, toRaw, onMounted, onBeforeUnmount, computed } from 'vue'
 
-  import { useRoute } from "vue-router"
   import { axiosClient } from "@/lib/axios"
-  import { debounce } from "lodash"
   import { isApprove, statusFit } from '@/utils'
   import { STATUS_APPROVE } from '@/constants'
 
   import { Search, Plus, ChevronRight } from 'lucide-vue-next'
   import DialogDetail from '@/components/ui-custom/DialogDetail.vue';
 
-  const { user } = defineProps({ user: Object })
-
-  const tableValue = ref([])
-  const search = ref("")
+  const { user, details, id_pr } = defineProps({ 
+    user: Object,
+    details: Array,
+    id_pr: String
+  })
+  const emits = defineEmits(["getData", "handleSearch"])
+  
   const dialog = reactive({
 		open: false,
 		status: 'add',
     value: {}
 	})
-  
-  const route = useRoute()
-  const id_pr = route.params.id
-
-  const getData = () => {
-    axiosClient.get(`/request_details?ma_pr=${id_pr}`)
-    .then(data => {
-      tableValue.value = data
-    })
-  }
-
-  onMounted(() => {
-    getData()
-  })
-
-  const handleSearch = (value) => {
-		if (value) {
-			axiosClient.get(`/request_details/search?ma_pr=${id_pr}&ma_vat_tu=${value}`)
-			.then(data => {
-				tableValue.value = data
-			})
-		} else {
-			getData()
-		}
-	};
-
-	const handleDebouncedSearch = debounce(() => {
-		handleSearch(search.value);
-	}, 300); 
 
 	const handleApprove = () => {
 		const data = {
@@ -58,7 +30,7 @@
 		
 		axiosClient.post("/requests/approve", data)
 		.then(() => {
-			getData()
+			emits("getData")
 		})
 	}
 
@@ -71,7 +43,7 @@
 		
 		axiosClient.post("/requests/approve", data)
 		.then(() => {
-			getData()
+			emits("getData")
 		})
 	}
 
@@ -83,12 +55,8 @@
 
   const canApprove = computed(() => {
     const status = statusFit(user?.skylight)
-    return tableValue.value?.[0]?.["Trang_thai"] === status
+    return details?.[0]?.["Trang_thai"] === status
   })
-
-  onBeforeUnmount(() => {
-		handleDebouncedSearch.cancel();
-	});
 </script>
 
 <template>
@@ -105,8 +73,7 @@
         <Input
           id="search"
           type="text"
-          v-model="search"
-          @input="handleDebouncedSearch"
+          @input="$emit('handleSearch', $event.target.value)"
           placeholder="Nhập mã vật liệu"
           class="pl-10"
         />
@@ -123,7 +90,7 @@
     </div>
     <div class="bg-white flex-1 pb-3 overflow-auto">
       <TableDetail
-        :value="tableValue"
+        :value="details"
         @view-detail="handleViewDetail"
       />
     </div>

@@ -1,47 +1,18 @@
 <script setup>
-	import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
-	
-	import { useRouter } from 'vue-router'
+	import { onMounted, onBeforeUnmount } from 'vue';
 
 	import { axiosClient } from '@/lib/axios';
-	import { debounce } from 'lodash';
 	import { STATUS_APPROVE } from '@/constants';
 	
 	import { Search, Plus } from 'lucide-vue-next';
 	import TableRequest from '@/components/ui-custom/TableRequest.vue';
 	import DialogRequest from '@/components/ui-custom/DialogRequest.vue';
-
-	const requests = ref([])
-	const search = ref("")
   
-	const router = useRouter()
-  const { user } = defineProps({ user: Object })
-
-	const getData = () => {
-		axiosClient.get(`/requests?phong_ban=${user.phongban}&chuc_vu=${user.skylight}`)
-		.then(data => {
-			requests.value = data
-		})
-	}
-
-	onMounted(() => {
-		getData()
+  const { user, requests } = defineProps({ 
+		user: Object,
+		requests: Array
 	})
-
-	const handleSearch = (value) => {
-		if (value) {
-			axiosClient.get(`/requests/search?ma_pr=${value}`)
-			.then(data => {
-				requests.value = data
-			})
-		} else {
-			getData()
-		}
-	};
-
-	const handleDebouncedSearch = debounce(() => {
-		handleSearch(search.value);
-	}, 300); 
+	const emits = defineEmits(["getData", "handleSearch"])
 
 	const handleApprove = (ma_pr) => {
 		const data = {
@@ -52,7 +23,7 @@
 		
 		axiosClient.post("/requests/approve", data)
 		.then(() => {
-			getData()
+			emits("getData")
 		})
 	}
 
@@ -65,13 +36,10 @@
 		
 		axiosClient.post("/requests/approve", data)
 		.then(() => {
-			getData()
+			emits("getData")
 		})
 	}
 
-	onBeforeUnmount(() => {
-		handleDebouncedSearch.cancel();
-	});
 </script>
 
 <template>
@@ -85,8 +53,7 @@
 					<Input
 						id="search"
 						type="text"
-						v-model="search"
-						@input="handleDebouncedSearch"
+						@input="$emits('handleSearch', $event.target.value)"
 						placeholder="Nhập tên mã PR"
 						class="pl-10"
 					/>

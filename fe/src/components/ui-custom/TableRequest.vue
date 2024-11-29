@@ -3,14 +3,14 @@
   import { isApprove, canEdit, formatDate, formatISODate, statusFit } from '@/utils'
   import { Trash, Pencil, X, Check } from "lucide-vue-next"
 
-  const { auth, value } = defineProps({
-    auth: String,
+  const { user, value } = defineProps({
+    user: Object,
     value: Array
   })
 
   const emits = defineEmits(['deleteRequest', 'updateRequest', 'approve', "reject"])
 
-  const statusApprove = computed(() => statusFit(auth))
+  const statusApprove = computed(() => statusFit(user?.skylight))
 </script>
 
 <template>
@@ -74,7 +74,7 @@
               </DialogContent>
             </Dialog>
           </div>
-          <div v-if="isApprove(auth) && row.Trang_thai === statusApprove" class="flex gap-2">
+          <div v-if="isApprove(user?.skylight) && row.Trang_thai === statusApprove" class="flex gap-2">
             <Button @click="$emit('reject', row.Ma_PR)" variant="destructive" size="sm"><X :size="20"/></Button>
             <Button @click="$emit('approve', row.Ma_PR)" size="sm"><Check :size="20"/></Button>
           </div>
