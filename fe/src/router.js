@@ -23,6 +23,9 @@ const routes = [
 		component: Auth,
 	},
 	{
+		redirect: '/requests'
+	},
+	{
 		path: '/',
 		component: ProtectedRoute,
 		children: [

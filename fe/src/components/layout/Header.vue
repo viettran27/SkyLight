@@ -12,7 +12,7 @@
 </script>
 
 <template>
-	<header class="h-[60px] border-b border-gray-300">
+	<header class="h-[60px] border-b border-gray-300 bg-white">
 		<div class="flex justify-between items-center px-4 h-full">
 			<AlignJustify class="cursor-pointer" />
 			<div class="flex gap-2 items-center">

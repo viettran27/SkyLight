@@ -1,5 +1,5 @@
 <script setup>
-  import { defineProps, computed } from 'vue'
+  import { computed } from 'vue'
 
   const {openDialog, status, value} = defineProps({
     openDialog: {
@@ -24,7 +24,6 @@
   })
 
   const isView = computed(() => { return status === 'view' })
-
 </script>
 
 <template>
@@ -38,8 +37,8 @@
       </DialogHeader>
       <div class="flex flex-col gap-y-4">
         <div class="flex gap-4 items-center">
-          <span class="min-w-[80px]">Mã vật liệu</span>
-          <Select :disabled="isView" :defaultValue="value?.Ma_vat_tu" v-model="value.Ma_vat_tu">
+          <span class="min-w-[80px]">Mã vật tư</span>
+          <Select :disabled="isView" :defaultValue="value?.Ma_vat_tu" v-model="value.Ma_vat_tu" @update:modelValue="value.Don_vi = 'License'">
             <SelectTrigger>
               <SelectValue placeholder="Chọn mã vật tư" />
             </SelectTrigger>

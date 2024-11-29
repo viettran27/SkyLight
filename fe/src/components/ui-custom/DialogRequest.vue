@@ -1,10 +1,11 @@
 <script setup>
-  import { defineProps, computed } from 'vue'
+  import { computed } from 'vue'
   const {open, status, value} = defineProps({
     open: Boolean,
     status: String,
     value: Object
   })
+
   const emit = defineEmits(['closeDialog', 'saveDialog'])
   const title = computed(() => {
     switch (status) {
@@ -35,8 +36,8 @@
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="machine">Máy móc</SelectItem>
-                <SelectItem value="pen">Bút</SelectItem>
+                <SelectItem value="Máy móc">Máy móc</SelectItem>
+                <SelectItem value="Bút">Bút</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -54,7 +55,7 @@
         <DialogClose as-child>
           <Button variant="outline">Hủy</Button>
         </DialogClose>
-        <Button @click="$emit('saveDialog')">Lưu</Button>
+        <Button @click.prevent="$emit('saveDialog')">Lưu</Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>

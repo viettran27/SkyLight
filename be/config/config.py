@@ -33,7 +33,7 @@ class Settings():
            "TrustServerCertificate": "yes" 
         }
     )
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS:int = 1
     SECURITY_ALGORITHM = 'HS256'
 

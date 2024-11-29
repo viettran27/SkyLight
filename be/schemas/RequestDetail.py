@@ -7,6 +7,12 @@ class M_Request_Req(BaseModel):
   Don_vi: str
   So_luong: int
 
+class M_Request_Req_Update(BaseModel):
+  Ma_vat_tu: str
+  Mo_ta: str
+  Don_vi: str
+  So_luong: int
+
 class M_Request_Not_Req(BaseModel):
   Don_gia: str
   Thanh_tien: int

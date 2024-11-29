@@ -9,7 +9,7 @@ const props = defineProps({
 <template>
 	<td
 		:class="
-			cn('p-4 align-middle [&:has([role=checkbox])]:pr-0', props.class)
+			cn('p-4 group-hover:bg-gray-100 align-middle [&:has([role=checkbox])]:pr-0', props.class)
 		"
 	>
 		<slot />
