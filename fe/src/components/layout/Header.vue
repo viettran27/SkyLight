@@ -5,6 +5,9 @@ import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
 const router = useRouter();
+
+const emit = defineEmits(["toggleNavbar"])
+
 const logout = () => {
 	authStore.logout();
 	router.push('/login');
@@ -14,7 +17,7 @@ const logout = () => {
 <template>
 	<header class="h-[60px] border-b border-gray-300 bg-white">
 		<div class="flex justify-between items-center px-4 h-full">
-			<AlignJustify class="cursor-pointer" />
+			<AlignJustify class="cursor-pointer" @click="$emit('toggleNavbar')"/>
 			<div class="flex gap-2 items-center">
 				<Bell />
 				<DropdownMenu>

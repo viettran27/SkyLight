@@ -97,7 +97,7 @@ const handleSaveDialog = async () => {
 			break;
 
 		default:
-			await axiosClient.post('/request_details', data);
+			await axiosClient.post('/request_details', value);
 			break;
 	}
 
@@ -123,7 +123,7 @@ onBeforeUnmount(() => {
 			:id_pr="id_pr"
 			:details="details"
 			:user="authStore?.user"
-			@get-data="getData"
+      @add-detail="handleAddDetail"
 			@handle-search="handleDebouncedSearch"
 			v-if="authStore?.user?.skylight === 'req'"
 		/>
@@ -131,7 +131,7 @@ onBeforeUnmount(() => {
 			:id_pr="id_pr"
 			:details="details"
 			:user="authStore?.user"
-			@get-data="getData"
+      @add-detail="handleAddDetail"
 			@handle-search="handleDebouncedSearch"
 			v-if="
 				isApprove(authStore?.user?.skylight) &&

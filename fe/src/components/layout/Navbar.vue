@@ -7,6 +7,10 @@ import { Package, HandCoins, Wallet, ChevronDown } from 'lucide-vue-next';
 const route = useRoute();
 const currentPath = ref(route.path);
 
+const { openNavbar } = defineProps({
+	openNavbar: Boolean,
+})
+
 watch(
 	() => route.path,
 	() => {
@@ -46,7 +50,7 @@ const navbar = [
 ];
 </script>
 <template>
-	<div class="h-[100vh] min-w-[250px] border-r border-gray-300">
+	<div class="h-[100vh] min-w-[250px] border-r border-gray-300 transition-all" v-show="openNavbar">
 		<div class="min-h-[60px] flex justify-center items-center">
 			<h1 class="text-primary text-3xl font-bold">SKYLIGHT</h1>
 		</div>
