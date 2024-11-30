@@ -5,10 +5,15 @@ import { axiosClient } from '@/lib/axios';
 import { isApprove, statusFit } from '@/utils';
 import { STATUS_APPROVE } from '@/constants';
 
-import { Search } from 'lucide-vue-next';
+import { Search, Plus } from 'lucide-vue-next';
 import DialogDetail from '@/components/ui-custom/DialogDetail.vue';
 
-const emits = defineEmits(['getData', 'handleSearch']);
+const { user, details, id_pr } = defineProps({
+	user: Object,
+	details: Array,
+	id_pr: String,
+});
+const emit = defineEmits(['getData', 'handleSearch']);
 
 const handleApprove = () => {
 	const data = {
@@ -18,7 +23,7 @@ const handleApprove = () => {
 	};
 
 	axiosClient.post('/requests/approve', data).then(() => {
-		emits('getData');
+		emit('getData');
 	});
 };
 
@@ -30,13 +35,18 @@ const handleReject = () => {
 	};
 
 	axiosClient.post('/requests/approve', data).then(() => {
-		emits('getData');
+		emit('getData');
 	});
 };
 
 const canApprove = computed(() => {
 	const status = statusFit(user?.skylight);
 	return details?.[0]?.['Trang_thai'] === status;
+});
+
+const canEditRequest = computed(() => {
+	const phong_ban = id_pr?.split('_')[0];
+	return phong_ban === user?.phongban;
 });
 </script>
 
@@ -56,6 +66,10 @@ const canApprove = computed(() => {
 				<Search class="size-6 text-muted-foreground" />
 			</span>
 		</div>
+		<Button v-if="canEditRequest" @click="handleAddDetail">
+			<Plus />
+			Thêm mới
+		</Button>
 		<div
 			v-if="isApprove(user?.skylight) && canApprove"
 			class="flex items-center gap-2"

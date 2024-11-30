@@ -92,7 +92,8 @@ const navbar = [
 						<div
 							:class="
 								cn(
-									currentPath.includes(item.href) && 'bg-gray-300',
+									currentPath.includes(item.href) &&
+										'bg-gray-300',
 									'flex gap-2 py-3 px-4 w-full cursor-pointer rounded-lg',
 								)
 							"

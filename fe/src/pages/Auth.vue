@@ -1,27 +1,29 @@
 <script setup>
-	import { axiosClient } from '@/lib/axios';
-	import { useRouter } from 'vue-router';
-	import { reactive } from 'vue';
-	import { cn } from '@/lib/utils';
-	import { buttonVariants } from '@/components/ui/button';
-	import { useAuthStore } from '@/stores/useAuth';
+import { axiosClient } from '@/lib/axios';
+import { useRouter } from 'vue-router';
+import { reactive } from 'vue';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
+import { useAuthStore } from '@/stores/useAuth';
 
-	const loginValue = reactive({
-		macongty: 'NT1',
-		masothe: '',
-		matkhau: '',
-	});
-	const router = useRouter();
-	const authStore = useAuthStore();
+const loginValue = reactive({
+	macongty: 'NT1',
+	masothe: '',
+	matkhau: '',
+});
+const router = useRouter();
+const authStore = useAuthStore();
 
-	const handleLogin = () => {
-		axiosClient.post('auth/login', loginValue, {withCredentials: true}).then((response) => {
+const handleLogin = () => {
+	axiosClient
+		.post('auth/login', loginValue, { withCredentials: true })
+		.then((response) => {
 			localStorage.setItem('refresh_token', response.refresh_token);
 			authStore.setAccessToken(response.access_token);
 			authStore.setUser(response.user);
 			router.push('/requests');
 		});
-	};
+};
 </script>
 
 <template>

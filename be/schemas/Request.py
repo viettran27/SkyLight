@@ -1,8 +1,9 @@
 from pydantic import BaseModel
 from datetime import date, datetime
-from enum import Enum
+from enums.Request import STATUS_APPROVE
 
 class M_Request(BaseModel):
+  Chuc_vu: str
   Phong_ban: str
   Ten_PR: str
   Muc_dich: str
@@ -18,11 +19,8 @@ class M_Request_Info(M_Request):
   Trang_thai: str
   Ghi_chu: str
 
-class Status_Approve(Enum):
-  APPROVED = "APPROVED"
-  REJECTED = "REJECTED"
 
 class M_Request_Approve(BaseModel):
-  Status: Status_Approve
+  Status: STATUS_APPROVE
   Ma_PR: str
   Auth: str

@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import './assets/index.css';
 import App from './App.vue';
 import { Input } from '@/components/ui/input';
+import MoneyInput from '@/components/ui-custom/MoneyInput.vue';
 import { Button } from '@/components/ui/button';
 import {
 	Select,
@@ -32,18 +33,18 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import TableDetail  from '@/components/ui-custom/TableDetail.vue';
+import TableDetail from '@/components/ui-custom/TableDetail.vue';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
 	DialogClose,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import { Textarea } from '@/components/ui/textarea'
+	DialogTrigger,
+} from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
 
 import router from './router';
 import { createPinia } from 'pinia';
@@ -52,6 +53,7 @@ const app = createApp(App);
 const pinia = createPinia();
 
 app.component('Input', Input);
+app.component('MoneyInput', MoneyInput);
 app.component('Button', Button);
 app.component('Select', Select);
 app.component('SelectContent', SelectContent);

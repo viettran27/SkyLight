@@ -1,4 +1,0 @@
-export const STATUS_APPROVE = {
-  APPROVED: "APPROVED",
-  REJECTED: "REJECTED"
-}

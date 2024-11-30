@@ -1,5 +1,7 @@
 from services.request import RequestService
-from schemas.Request import M_Request, M_Request_Approve, Status_Approve
+from schemas.Request import M_Request, M_Request_Approve
+from enums.Request import STATUS_APPROVE, STATUS
+from enums.Auth import POSTITON
 
 class RequestRepository:
   @staticmethod
@@ -28,19 +30,19 @@ class RequestRepository:
     auth = data.Auth
     ma_pr = data.Ma_PR
 
-    if status == Status_Approve.REJECTED:
+    if status == STATUS_APPROVE.REJECTED:
       all_status = {
-        "hod": "Trưởng bộ phận từ chối",
-        "acct": "Kế toán từ chối",
-        "ca": "Trưởng kế toán từ chối",
-        "dir": "Lãnh đạo từ chối"
+        POSTITON.HOD.value: STATUS.HOD_RJ.value,
+        POSTITON.ACCT.value: STATUS.ACCT_RJ.value,
+        POSTITON.CA.value: STATUS.CA_RJ.value,
+        POSTITON.DIR.value: STATUS.DIR_RJ.value
       }
     else:
       all_status = {
-        "hod": "Đang đợi kế toán duyệt",
-        "acct": "Đang đợi kế toán trưởng duyệt",
-        "ca": "Đang đợi duyệt cuối cùng",
-        "dir": "Đã duyệt"
+        POSTITON.HOD.value: STATUS.ACCT.value,
+        POSTITON.ACCT.value: STATUS.CA.value,
+        POSTITON.CA.value: STATUS.DIR.value,
+        POSTITON.DIR.value: STATUS.DONE.value
       }
 
     return RequestService.approve(all_status[auth], ma_pr)

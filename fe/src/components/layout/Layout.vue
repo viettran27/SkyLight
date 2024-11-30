@@ -1,11 +1,18 @@
 <script setup>
+import { ref } from 'vue';
 import Navbar from './Navbar.vue';
 import Header from './Header.vue';
+
+const openNavbar = ref(false);
+
+const toggleNavbar = () => {
+	openNavbar.value = !openNavbar.value;
+};
 </script>
 
 <template>
 	<div class="flex overflow-hidden">
-		<Navbar />
+		<Navbar :openNavbar="openNavbar" />
 		<div class="h-[100vh] flex-1 w-[calc(100%-250px)] bg-gray-200">
 			<Header />
 			<div class="h-[calc(100vh-60px)] w-full p-3 px-5">

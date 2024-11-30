@@ -1,36 +1,59 @@
-import { useAuthStore } from "@/stores/useAuth";
+import { useAuthStore } from '@/stores/useAuth';
+import { STATUS, POSTITON } from '@/constants';
 
-export const canEdit = (status) => {
-  const authStore = useAuthStore();
+export const canEditRequest = (status, ma_PR) => {
+	if (!status || !ma_PR) return;
 
-  return authStore.user?.skylight && 
-  ( 
-    (
-      status === 'Đang đợi trưởng bộ phận duyệt' ||
-      status === 'Đang đợi kế toán duyệt'
-    ) &&
-    authStore.user?.skylight === 'req'
-  )
-  ||
-  (
-    status === 'Đang đợi kế toán trưởng duyệt' &&
-    authStore.user?.skylight === 'acct'
-  )
-}
+	const authStore = useAuthStore();
+	const department = ma_PR.split('_')[0];
+
+	return (
+		(authStore.user?.skylight &&
+			(status === STATUS.HOD || status === STATUS.ACCT) &&
+			authStore.user?.skylight === POSTITON.REQ &&
+			department === authStore.user?.phongban) ||
+		(status === STATUS.CA &&
+			authStore.user?.skylight === POSTITON.CA &&
+			department === authStore.user?.phongban)
+	);
+};
+
+export const canEditDetail = (status, ma_PR) => {
+	if (!status || !ma_PR) return;
+
+	const authStore = useAuthStore();
+	const department = ma_PR.split('_')[0];
+
+	return (
+		(authStore.user?.skylight &&
+			(status === STATUS.HOD || status === STATUS.ACCT) &&
+			authStore.user?.skylight === POSTITON.REQ &&
+			department === authStore.user?.phongban) ||
+		((status === STATUS.ACCT || status === STATUS.ACCT_EDIT) &&
+			authStore.user?.skylight === POSTITON.ACCT &&
+			department !== authStore.user?.phongban) ||
+		(status === STATUS.CA &&
+			authStore.user?.skylight === POSTITON.ACCT &&
+			department === authStore.user?.phongban)
+	);
+};
 
 export const isApprove = (auth) => {
-  return auth === "hod" ||
-  auth === "ca" ||
-  auth === "dir"
-}
+	return (
+		auth === POSTITON.HOD ||
+		auth === POSTITON.ACCT ||
+		auth === POSTITON.CA ||
+		auth === POSTITON.DIR
+	);
+};
 
 export const statusFit = (auth) => {
-  const status = {
-    "hod": "Đang đợi trưởng bộ phận duyệt",
-    "acct": "Đang đợi kế toán duyệt",
-    "ca": "Đang đợi kế toán trưởng duyệt",
-    "dir": "Đang đợi duyệt cuối cùng"
-  }
+	const status = {
+		[POSTITON.HOD]: STATUS.HOD,
+		[POSTITON.ACCT]: STATUS.ACCT,
+		[POSTITON.CA]: STATUS.CA,
+		[POSTITON.DIR]: STATUS.DIR,
+	};
 
-  return status[auth]
-}
+	return status[auth];
+};

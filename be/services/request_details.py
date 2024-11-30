@@ -1,8 +1,11 @@
 from typing import Optional
 from db.base import get_db2
-from sqlalchemy import func
-from schemas.RequestDetail import M_Request_Req, M_Request_Req_Update
+from sqlalchemy import func, and_
+from enums.Auth import POSTITON
+from enums.Request import STATUS
+from schemas.RequestDetail import M_Request_Detail
 from models.RequestDetail import DB_Request_Detail
+from services.request import RequestService
 from datetime import datetime
 
 class RequestDetailService:
@@ -25,7 +28,7 @@ class RequestDetailService:
     return all_details
 
   @staticmethod
-  def create_request(data: M_Request_Req) -> Optional[DB_Request_Detail]:
+  def create_request(data: M_Request_Detail) -> Optional[DB_Request_Detail]:
     db= get_db2()
 
     new_request_detail = DB_Request_Detail(
@@ -34,7 +37,7 @@ class RequestDetailService:
       Mo_ta=data.Mo_ta,
       Don_vi=data.Don_vi,
       So_luong=data.So_luong,
-      Trang_thai="Đang đợi trưởng bộ phận duyệt",
+      Trang_thai=STATUS.HOD.value if POSTITON.REQ.value == data.Chuc_vu else STATUS.CA.value,
       Thoi_gian_yeu_cau=datetime.now(),
     )
 
@@ -45,15 +48,52 @@ class RequestDetailService:
     return new_request_detail
   
   @staticmethod
-  def update_request(id: int, data: M_Request_Req_Update) -> Optional[DB_Request_Detail]:
+  def update_request(id: int, data: M_Request_Detail) -> Optional[DB_Request_Detail]:
     db= get_db2()
 
-    result = db.query(DB_Request_Detail).filter(DB_Request_Detail.ID == id).update({
-      DB_Request_Detail.Ma_vat_tu: data.Ma_vat_tu,
-      DB_Request_Detail.Mo_ta: data.Mo_ta,
-      DB_Request_Detail.Don_vi: data.Don_vi,
-      DB_Request_Detail.So_luong: data.So_luong,
-    })
+    if data.Chuc_vu == POSTITON.REQ.value:
+      result = db.query(DB_Request_Detail).filter(DB_Request_Detail.ID == id).update({
+        DB_Request_Detail.Ma_vat_tu: data.Ma_vat_tu,
+        DB_Request_Detail.Mo_ta: data.Mo_ta,
+        DB_Request_Detail.Don_vi: data.Don_vi,
+        DB_Request_Detail.So_luong: data.So_luong,
+      })
+    else:
+      data_exist = db.query(DB_Request_Detail).filter(
+        and_(
+          DB_Request_Detail.ID == id,
+          DB_Request_Detail.Ma_vat_tu == data.Ma_vat_tu,
+          DB_Request_Detail.Mo_ta ==  data.Mo_ta,
+          DB_Request_Detail.Don_vi == data.Don_vi,
+          DB_Request_Detail.So_luong == data.So_luong
+        )
+      ).first()
+      
+      if data_exist:
+        result = db.query(DB_Request_Detail).filter(DB_Request_Detail.ID == id).update({
+          DB_Request_Detail.Ma_vat_tu: data.Ma_vat_tu,
+          DB_Request_Detail.Mo_ta: data.Mo_ta,
+          DB_Request_Detail.Don_vi: data.Don_vi,
+          DB_Request_Detail.So_luong: data.So_luong,
+          DB_Request_Detail.Don_gia: data.Don_gia,
+          DB_Request_Detail.Thanh_tien: data.So_luong * (data.Don_gia or 0),
+          DB_Request_Detail.Nha_cung_cap: data.Nha_cung_cap,
+          DB_Request_Detail.Ngay_ve_du_kien: data.Ngay_ve_du_kien,  
+        })
+      else:
+        print(getattr(data, "Don_gia", None))
+        result = db.query(DB_Request_Detail).filter(DB_Request_Detail.ID == id).update({
+          DB_Request_Detail.Ma_vat_tu: data.Ma_vat_tu,
+          DB_Request_Detail.Mo_ta: data.Mo_ta,
+          DB_Request_Detail.Don_vi: data.Don_vi,
+          DB_Request_Detail.So_luong: data.So_luong,
+          DB_Request_Detail.Don_gia: getattr(data, "Don_gia", None),
+          DB_Request_Detail.Thanh_tien: (data.So_luong * getattr(data, "Don_gia", None)) if getattr(data, "Don_gia", None) else None,
+          DB_Request_Detail.Nha_cung_cap: getattr(data, "Nha_cung_cap", None),
+          DB_Request_Detail.Ngay_ve_du_kien: getattr(data, "Ngay_ve_du_kien", None),
+          DB_Request_Detail.Trang_thai: STATUS.ACCT_EDIT.value,
+        })
+        RequestService.update_status(data.Ma_PR, STATUS.ACCT_EDIT.value)
     db.commit()
     db.close()
     return result

@@ -1,5 +1,5 @@
 from services.request_details import RequestDetailService
-from schemas.RequestDetail import M_Request_Req, M_Request_Req_Update
+from schemas.RequestDetail import M_Request_Detail
 
 class RequestDetailRepository:
   @staticmethod
@@ -11,11 +11,11 @@ class RequestDetailRepository:
     return RequestDetailService.get_requests_with_vt(ma_pr, ma_vat_tu)
 
   @staticmethod
-  def create_request(data: M_Request_Req):
+  def create_request(data: M_Request_Detail):
     return RequestDetailService.create_request(data)
   
   @staticmethod
-  def update_request(id: int, data: M_Request_Req_Update):
+  def update_request(id: int, data: M_Request_Detail):
     return RequestDetailService.update_request(id, data)
   
   @staticmethod

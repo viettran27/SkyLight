@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 from repository.request_details import RequestDetailRepository
-from config.config import settings
-from schemas.RequestDetail import M_Request_Req_Update, M_Request_Req
+from schemas.RequestDetail import M_Request_Detail
 
 router = APIRouter()
 
@@ -14,11 +13,11 @@ def get_requests_with_vt(ma_pr: str, ma_vat_tu: str):
   return RequestDetailRepository.get_requests_with_vt(ma_pr, ma_vat_tu)
 
 @router.post("/")
-def create_requests(data: M_Request_Req):
+def create_requests(data: M_Request_Detail):
   return RequestDetailRepository.create_request(data)
 
 @router.put("/{id}")
-def update_requests(id: int, data: M_Request_Req_Update):
+def update_requests(id: int, data: M_Request_Detail):
   return RequestDetailRepository.update_request(id, data)
 
 @router.delete("/{id}")

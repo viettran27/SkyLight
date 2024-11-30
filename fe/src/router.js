@@ -5,7 +5,10 @@ import { Layout } from '@/components/layout';
 
 const routesConfig = [
 	{ path: '/requests', component: () => import('@/pages/Request.vue') },
-	{ path: '/requests/:id', component: () => import('@/pages/RequestDetail.vue') },
+	{
+		path: '/requests/:id',
+		component: () => import('@/pages/RequestDetail.vue'),
+	},
 	{ path: '/responses', component: () => import('@/pages/Response.vue') },
 	{
 		path: '/automatic_salary',
@@ -23,7 +26,7 @@ const routes = [
 		component: Auth,
 	},
 	{
-		redirect: '/requests'
+		redirect: '/requests',
 	},
 	{
 		path: '/',

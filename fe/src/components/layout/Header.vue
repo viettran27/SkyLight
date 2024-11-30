@@ -1,14 +1,14 @@
 <script setup>
-	import { AlignJustify, Bell } from 'lucide-vue-next';
-	import { useAuthStore } from '@/stores/useAuth';
-	import { useRouter } from 'vue-router'
+import { AlignJustify, Bell } from 'lucide-vue-next';
+import { useAuthStore } from '@/stores/useAuth';
+import { useRouter } from 'vue-router';
 
-	const authStore = useAuthStore()
-	const router = useRouter()
-	const logout = () => {
-		authStore.logout();	
-		router.push("/login")
-	}
+const authStore = useAuthStore();
+const router = useRouter();
+const logout = () => {
+	authStore.logout();
+	router.push('/login');
+};
 </script>
 
 <template>
@@ -24,9 +24,12 @@
 						></div>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
-						<DropdownMenuItem @click="logout">Đăng xuất</DropdownMenuItem>
+						<DropdownMenuItem @click="logout"
+							>Đăng xuất</DropdownMenuItem
+						>
 					</DropdownMenuContent>
 				</DropdownMenu>
+				<span>{{ authStore?.user?.hoten }}</span>
 			</div>
 		</div>
 	</header>
