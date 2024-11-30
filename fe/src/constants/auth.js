@@ -1,4 +1,4 @@
-export const POSTITON = {
+export const POSITION = {
 	REQ: 'req',
 	HOD: 'hod',
 	ACCT: 'acct',

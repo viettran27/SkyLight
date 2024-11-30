@@ -6,6 +6,7 @@ from schemas.User import User, UserInfo
 from schemas.Auth import Token
 from config.config import settings
 import datetime
+from enums.Auth import POSITION 
 import jwt
 
 class AuthRepository:

@@ -1,11 +1,12 @@
 from fastapi import APIRouter
 from repository.request import RequestRepository
 from schemas.Request import M_Request, M_Request_Approve
+from enums.Auth import POSITION 
 
 router = APIRouter()
 
 @router.get("/")
-def get_requests(phong_ban:str, chuc_vu:str):
+def get_requests(phong_ban:str, chuc_vu: POSITION):
   return RequestRepository.get_requests(phong_ban, chuc_vu)
 
 @router.get("/search")

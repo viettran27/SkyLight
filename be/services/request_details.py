@@ -1,7 +1,7 @@
 from typing import Optional
 from db.base import get_db2
 from sqlalchemy import func, and_
-from enums.Auth import POSTITON
+from enums.Auth import POSITION
 from enums.Request import STATUS
 from schemas.RequestDetail import M_Request_Detail
 from models.RequestDetail import DB_Request_Detail
@@ -14,21 +14,21 @@ class RequestDetailService:
     pass
 
   @staticmethod
-  def get_requests(ma_pr: str) -> list[DB_Request_Detail]:
+  def get_details(ma_pr: str) -> list[DB_Request_Detail]:
     db = get_db2()
     all_details = db.query(DB_Request_Detail).filter(DB_Request_Detail.Ma_PR == ma_pr).all()
     db.close()
     return all_details
   
   @staticmethod
-  def get_requests_with_vt(ma_pr:str, ma_vat_tu: str) -> list[DB_Request_Detail]:
+  def get_details_with_vt(ma_pr:str, ma_vat_tu: str) -> list[DB_Request_Detail]:
     db = get_db2()
     all_details = db.query(DB_Request_Detail).filter(DB_Request_Detail.Ma_PR == ma_pr, func.lower(DB_Request_Detail.Ma_vat_tu).like(f"%{ma_vat_tu.lower()}%")).all()
     db.close()
     return all_details
 
   @staticmethod
-  def create_request(data: M_Request_Detail) -> Optional[DB_Request_Detail]:
+  def create_detail(data: M_Request_Detail) -> Optional[DB_Request_Detail]:
     db= get_db2()
 
     new_request_detail = DB_Request_Detail(
@@ -37,9 +37,10 @@ class RequestDetailService:
       Mo_ta=data.Mo_ta,
       Don_vi=data.Don_vi,
       So_luong=data.So_luong,
-      Trang_thai=STATUS.HOD.value if POSTITON.REQ.value == data.Chuc_vu else STATUS.CA.value,
+      Trang_thai=STATUS.HOD.value if POSITION.REQ.value == data.Chuc_vu else STATUS.CA.value,
       Thoi_gian_yeu_cau=datetime.now(),
     )
+    RequestService.update_status_when_create_detail(data.Ma_PR, STATUS.HOD.value if POSITION.REQ.value == data.Chuc_vu else STATUS.CA.value)
 
     db.add(new_request_detail)
     db.commit()
@@ -48,10 +49,10 @@ class RequestDetailService:
     return new_request_detail
   
   @staticmethod
-  def update_request(id: int, data: M_Request_Detail) -> Optional[DB_Request_Detail]:
+  def update_detail(id: int, data: M_Request_Detail) -> Optional[DB_Request_Detail]:
     db= get_db2()
 
-    if data.Chuc_vu == POSTITON.REQ.value:
+    if data.Chuc_vu == POSITION.REQ.value:
       result = db.query(DB_Request_Detail).filter(DB_Request_Detail.ID == id).update({
         DB_Request_Detail.Ma_vat_tu: data.Ma_vat_tu,
         DB_Request_Detail.Mo_ta: data.Mo_ta,
@@ -81,7 +82,6 @@ class RequestDetailService:
           DB_Request_Detail.Ngay_ve_du_kien: data.Ngay_ve_du_kien,  
         })
       else:
-        print(getattr(data, "Don_gia", None))
         result = db.query(DB_Request_Detail).filter(DB_Request_Detail.ID == id).update({
           DB_Request_Detail.Ma_vat_tu: data.Ma_vat_tu,
           DB_Request_Detail.Mo_ta: data.Mo_ta,
@@ -99,7 +99,7 @@ class RequestDetailService:
     return result
   
   @staticmethod
-  def delete_request(id: int) -> int:
+  def delete_detail(id: int) -> int:
     db = get_db2()
     result = db.query(DB_Request_Detail).filter(DB_Request_Detail.ID == id).delete()
     db.commit()

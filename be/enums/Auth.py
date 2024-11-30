@@ -1,6 +1,6 @@
 from enum import Enum
 
-class POSTITON(Enum):
+class POSITION(Enum):
   REQ = "req"
   HOD = "hod"
   ACCT = "acct"

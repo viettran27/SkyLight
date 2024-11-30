@@ -120,9 +120,7 @@ onBeforeUnmount(() => {
 			<h1>{{ id_pr }}</h1>
 		</div>
 		<RequestDetail
-			:id_pr="id_pr"
 			:details="details"
-			:user="authStore?.user"
       @add-detail="handleAddDetail"
 			@handle-search="handleDebouncedSearch"
 			v-if="authStore?.user?.skylight === 'req'"

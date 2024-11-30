@@ -2,33 +2,32 @@ from typing import Optional
 from db.base import get_db2
 from sqlalchemy import func, and_, cast, Integer
 from schemas.Request import M_Request
-from enums.Auth import POSTITON
+from enums.Auth import POSITION
 from enums.Request import STATUS
 from models.Request import DB_Request
 from models.RequestDetail import DB_Request_Detail
 from datetime import datetime
+from enums.Auth import POSITION
+from positions import Hod, Req, Acct
 
 class RequestService:
   def __init__(self):
     pass
 
   @staticmethod
-  def get_requests(phong_ban: str, chuc_vu: str) -> list[DB_Request]:
+  def get_requests(phong_ban: str, chuc_vu: POSITION) -> list[DB_Request]:
     db = get_db2()
 
-    if chuc_vu == POSTITON.REQ.value or chuc_vu == POSTITON.HOD.value:
-      all_requests = db.query(DB_Request).filter(DB_Request.Phong_ban == phong_ban).all()
-    
-    elif chuc_vu == POSTITON.ACCT.value:
-      all_requests = db.query(DB_Request).filter(
-        and_(
-          DB_Request.Trang_thai != STATUS.HOD.value,
-          DB_Request.Trang_thai != STATUS.HOD_RJ.value
-        )
-      ).all()
-    
+    positions = {
+      POSITION.REQ: Req.REQ,
+      POSITION.HOD: Hod.HOD,
+      POSITION.ACCT: Acct.ACCT,
+    }
+
+    if chuc_vu == POSITION.REQ or chuc_vu == POSITION.HOD:
+      all_requests = positions[chuc_vu].get_requests(phong_ban)
     else:
-      all_requests = db.query(DB_Request).all()
+      all_requests = positions[chuc_vu].get_requests()
 
     db.close()
     return all_requests
@@ -60,7 +59,6 @@ class RequestService:
       Muc_dich=data.Muc_dich,
       Ngay_can=data.Ngay_can,
       Nguoi_yeu_cau=data.Nguoi_yeu_cau,
-      Trang_thai=STATUS.HOD.value if POSTITON.REQ.value == data.Chuc_vu else STATUS.CA.value,
       Thoi_gian_yeu_cau=datetime.now(),
     )
 
@@ -114,3 +112,14 @@ class RequestService:
     db.commit()
     db.close()
     return result
+  
+  @staticmethod
+  def update_status_when_create_detail(ma_pr: str, status: str):
+    db = get_db2()
+
+    request = db.query(DB_Request).filter(DB_Request.Ma_PR == ma_pr).first()
+    if request.Trang_thai is None:
+      db.query(DB_Request).filter(DB_Request.Ma_PR == ma_pr).update({DB_Request.Trang_thai: status})
+
+    db.commit()
+    db.close()

@@ -8,6 +8,11 @@ import { STATUS_APPROVE } from '@/constants';
 import { Search } from 'lucide-vue-next';
 import DialogDetail from '@/components/ui-custom/DialogDetail.vue';
 
+const { user, id_pr, details } = defineProps({
+  user: Object,
+  id_pr: String, 
+  details: Array
+})
 const emits = defineEmits(['getData', 'handleSearch']);
 
 const handleApprove = () => {

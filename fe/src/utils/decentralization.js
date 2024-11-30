@@ -1,5 +1,5 @@
 import { useAuthStore } from '@/stores/useAuth';
-import { STATUS, POSTITON } from '@/constants';
+import { STATUS, POSITION } from '@/constants';
 
 export const canEditRequest = (status, ma_PR) => {
 	if (!status || !ma_PR) return;
@@ -10,10 +10,10 @@ export const canEditRequest = (status, ma_PR) => {
 	return (
 		(authStore.user?.skylight &&
 			(status === STATUS.HOD || status === STATUS.ACCT) &&
-			authStore.user?.skylight === POSTITON.REQ &&
+			authStore.user?.skylight === POSITION.REQ &&
 			department === authStore.user?.phongban) ||
 		(status === STATUS.CA &&
-			authStore.user?.skylight === POSTITON.CA &&
+			authStore.user?.skylight === POSITION.CA &&
 			department === authStore.user?.phongban)
 	);
 };
@@ -27,32 +27,32 @@ export const canEditDetail = (status, ma_PR) => {
 	return (
 		(authStore.user?.skylight &&
 			(status === STATUS.HOD || status === STATUS.ACCT) &&
-			authStore.user?.skylight === POSTITON.REQ &&
+			authStore.user?.skylight === POSITION.REQ &&
 			department === authStore.user?.phongban) ||
 		((status === STATUS.ACCT || status === STATUS.ACCT_EDIT) &&
-			authStore.user?.skylight === POSTITON.ACCT &&
+			authStore.user?.skylight === POSITION.ACCT &&
 			department !== authStore.user?.phongban) ||
 		(status === STATUS.CA &&
-			authStore.user?.skylight === POSTITON.ACCT &&
+			authStore.user?.skylight === POSITION.ACCT &&
 			department === authStore.user?.phongban)
 	);
 };
 
 export const isApprove = (auth) => {
 	return (
-		auth === POSTITON.HOD ||
-		auth === POSTITON.ACCT ||
-		auth === POSTITON.CA ||
-		auth === POSTITON.DIR
+		auth === POSITION.HOD ||
+		auth === POSITION.ACCT ||
+		auth === POSITION.CA ||
+		auth === POSITION.DIR
 	);
 };
 
 export const statusFit = (auth) => {
 	const status = {
-		[POSTITON.HOD]: STATUS.HOD,
-		[POSTITON.ACCT]: STATUS.ACCT,
-		[POSTITON.CA]: STATUS.CA,
-		[POSTITON.DIR]: STATUS.DIR,
+		[POSITION.HOD]: STATUS.HOD,
+		[POSITION.ACCT]: STATUS.ACCT,
+		[POSITION.CA]: STATUS.CA,
+		[POSITION.DIR]: STATUS.DIR,
 	};
 
 	return status[auth];
