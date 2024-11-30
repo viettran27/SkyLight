@@ -2,7 +2,8 @@
 import { Trash, Pencil } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useAuthStore } from '@/stores/useAuth';
-import { canEditDetail } from '@/utils';
+import { canEditDetail, viewMoney } from '@/utils';
+import { POSITION } from '@/constants';
 
 const { value, id_pr } = defineProps({
 	value: {
@@ -21,19 +22,11 @@ const handleDeleteDetail = (id) => {
 	});
 };
 
-const viewMoney = (money) => {
-	if (!money) return '';
-	return money?.toLocaleString('vi-VN', {
-		style: 'currency',
-		currency: 'VND',
-	});
-};
-
 const canViewMoney = computed(() => {
 	return (
 		authStore.user?.skylight &&
-		authStore.user?.skylight !== 'req' &&
-		authStore.user?.skylight !== 'hod'
+		authStore.user?.skylight !== POSITION.REQ &&
+		authStore.user?.skylight !== POSITION.HOD
 	);
 });
 </script>

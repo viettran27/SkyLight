@@ -8,12 +8,12 @@ import { STATUS_APPROVE } from '@/constants';
 import { Search } from 'lucide-vue-next';
 import DialogDetail from '@/components/ui-custom/DialogDetail.vue';
 
-const { user, id_pr, details } = defineProps({
+const { user, id_pr, status } = defineProps({
   user: Object,
   id_pr: String, 
-  details: Array
+  status: String
 })
-const emits = defineEmits(['getData', 'handleSearch']);
+const emit = defineEmits(['getData', 'handleSearch']);
 
 const handleApprove = () => {
 	const data = {
@@ -23,7 +23,7 @@ const handleApprove = () => {
 	};
 
 	axiosClient.post('/requests/approve', data).then(() => {
-		emits('getData');
+		emit('getData');
 	});
 };
 
@@ -35,13 +35,13 @@ const handleReject = () => {
 	};
 
 	axiosClient.post('/requests/approve', data).then(() => {
-		emits('getData');
+		emit('getData');
 	});
 };
 
 const canApprove = computed(() => {
-	const status = statusFit(user?.skylight);
-	return details?.[0]?.['Trang_thai'] === status;
+	const statusFit = statusFit(user?.skylight);
+	return status === statusFit;
 });
 </script>
 

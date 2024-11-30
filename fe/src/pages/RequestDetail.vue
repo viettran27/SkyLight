@@ -24,6 +24,7 @@ const INIT_DIALOG = {
 };
 
 const details = ref([]);
+const status = ref(null);
 const dialog = reactive({
 	open: false,
 	status: 'add',
@@ -37,7 +38,8 @@ const id_pr = route.params.id;
 
 const getData = () => {
 	axiosClient.get(`/request_details?ma_pr=${id_pr}`).then((data) => {
-		details.value = data;
+    status.value = data.status;
+		details.value = data.data;
 	});
 };
 
@@ -120,15 +122,16 @@ onBeforeUnmount(() => {
 			<h1>{{ id_pr }}</h1>
 		</div>
 		<RequestDetail
-			:details="details"
+      :status="status"
       @add-detail="handleAddDetail"
 			@handle-search="handleDebouncedSearch"
 			v-if="authStore?.user?.skylight === 'req'"
 		/>
 		<ApproveDetail
 			:id_pr="id_pr"
-			:details="details"
+			:status="status"
 			:user="authStore?.user"
+      @get-data="getData"
       @add-detail="handleAddDetail"
 			@handle-search="handleDebouncedSearch"
 			v-if="
@@ -138,7 +141,7 @@ onBeforeUnmount(() => {
 		/>
 		<AccountantDetail
 			:id_pr="id_pr"
-			:details="details"
+			:status="status"
 			:user="authStore?.user"
 			@get-data="getData"
 			@handle-search="handleDebouncedSearch"

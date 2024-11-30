@@ -6,8 +6,10 @@ import {
 	formatDate,
 	formatISODate,
 	statusFit,
+  viewMoney
 } from '@/utils';
 import { Trash, Pencil, X, Check } from 'lucide-vue-next';
+import { POSITION } from '@/constants';
 
 const { user, value } = defineProps({
 	user: Object,
@@ -22,6 +24,11 @@ const emits = defineEmits([
 ]);
 
 const statusApprove = computed(() => statusFit(user?.skylight));
+const canViewMoney = computed(() => {
+    return user?.skylight &&
+		user?.skylight !== POSITION.REQ &&
+		user?.skylight !== POSITION.HOD
+})
 </script>
 
 <template>
@@ -39,6 +46,7 @@ const statusApprove = computed(() => statusFit(user?.skylight));
 				<TableHead>Tên PR</TableHead>
 				<TableHead>Mục đích</TableHead>
 				<TableHead>Ngày cần</TableHead>
+        <TableHead v-if="canViewMoney">Tông tiền</TableHead>
 				<TableHead>Trạng thái</TableHead>
 				<TableHead>Trưởng bộ phận duyệt</TableHead>
 				<TableHead>Kế toán phê duyệt</TableHead>
@@ -71,6 +79,7 @@ const statusApprove = computed(() => statusFit(user?.skylight));
 					<TableCell>{{ row.Ten_PR }}</TableCell>
 					<TableCell>{{ row.Muc_dich }}</TableCell>
 					<TableCell>{{ formatDate(row.Ngay_can) }}</TableCell>
+          <TableCell v-if="canViewMoney">{{ viewMoney(row.Tong_so_tien) }}</TableCell>
 					<TableCell>{{ row.Trang_thai }}</TableCell>
 					<TableCell>{{
 						formatISODate(row.Truong_BP_duyet)

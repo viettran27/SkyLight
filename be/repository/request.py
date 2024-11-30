@@ -2,11 +2,23 @@ from services.request import RequestService
 from schemas.Request import M_Request, M_Request_Approve
 from enums.Request import STATUS_APPROVE, STATUS
 from enums.Auth import POSITION
+from positions import Hod, Req, Acct
 
 class RequestRepository:
+  positions = {
+    POSITION.REQ: Req.REQ,
+    POSITION.HOD: Hod.HOD,
+    POSITION.ACCT: Acct.ACCT,
+  }
+  
   @staticmethod
   def get_requests(phong_ban: str, chuc_vu: POSITION):
-    return RequestService.get_requests(phong_ban, chuc_vu)
+
+    if chuc_vu == POSITION.REQ or chuc_vu == POSITION.HOD:
+      all_requests = RequestRepository.positions[chuc_vu].get_requests(phong_ban)
+    else:
+      all_requests = RequestRepository.positions[chuc_vu].get_requests()
+    return all_requests
   
   @staticmethod
   def get_requests_with_pr(ma_pr: str):
@@ -30,19 +42,4 @@ class RequestRepository:
     auth = data.Auth
     ma_pr = data.Ma_PR
 
-    if status == STATUS_APPROVE.REJECTED:
-      all_status = {
-        POSITION.HOD.value: STATUS.HOD_RJ.value,
-        POSITION.ACCT.value: STATUS.ACCT_RJ.value,
-        POSITION.CA.value: STATUS.CA_RJ.value,
-        POSITION.DIR.value: STATUS.DIR_RJ.value
-      }
-    else:
-      all_status = {
-        POSITION.HOD.value: STATUS.ACCT.value,
-        POSITION.ACCT.value: STATUS.CA.value,
-        POSITION.CA.value: STATUS.DIR.value,
-        POSITION.DIR.value: STATUS.DONE.value
-      }
-
-    return RequestService.approve(all_status[auth], ma_pr)
+    return RequestRepository.positions[auth].approve(ma_pr, status)

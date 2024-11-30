@@ -8,9 +8,9 @@ import { STATUS_APPROVE } from '@/constants';
 import { Search, Plus } from 'lucide-vue-next';
 import DialogDetail from '@/components/ui-custom/DialogDetail.vue';
 
-const { user, details, id_pr } = defineProps({
+const { user, status, id_pr } = defineProps({
 	user: Object,
-	details: Array,
+	status: String,
 	id_pr: String,
 });
 const emit = defineEmits(['getData', 'handleSearch']);
@@ -40,8 +40,8 @@ const handleReject = () => {
 };
 
 const canApprove = computed(() => {
-	const status = statusFit(user?.skylight);
-	return details?.[0]?.['Trang_thai'] === status;
+	const statusFit = statusFit(user?.skylight);
+	return status === statusFit;
 });
 
 const canEditRequest = computed(() => {

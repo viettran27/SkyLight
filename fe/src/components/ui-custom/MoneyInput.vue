@@ -37,7 +37,7 @@ function onInput(event) {
 	const input = event.target.value;
 	const numericValue = input.replace(/[^\d]/g, '');
 	rawValue.value = numericValue ? Number(numericValue) : 0;
-	emit('update:props.value', rawValue.value);
+	emit('update:value', rawValue.value);
 }
 
 watch(

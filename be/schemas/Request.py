@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import date, datetime
 from enums.Request import STATUS_APPROVE
+from enums.Auth import POSITION
 
 class M_Request(BaseModel):
   Chuc_vu: str
@@ -23,4 +24,4 @@ class M_Request_Info(M_Request):
 class M_Request_Approve(BaseModel):
   Status: STATUS_APPROVE
   Ma_PR: str
-  Auth: str
+  Auth: POSITION

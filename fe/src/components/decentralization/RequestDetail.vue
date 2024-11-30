@@ -13,17 +13,21 @@ import { isApprove } from '@/utils';
 import { STATUS } from '@/constants';
 import { Search, Plus } from 'lucide-vue-next';
 
-const { details } = defineProps({
-	details: Array,
+const { status } = defineProps({
+	status: String,
 });
 const emit = defineEmits(['handleSearch', 'addDetail']);
 
 const canAdd = computed(() => {
 	return (
-		!details?.[0]?.['Trang_thai'] ||
-		details?.[0]?.['Trang_thai'] === STATUS.HOD
+		!status ||
+		status === STATUS.HOD
 	);
 });
+
+const canApprove = computed(() => {
+  status === STATUS.ACCT_EDIT
+})
 </script>
 
 <template>

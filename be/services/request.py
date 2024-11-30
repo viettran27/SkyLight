@@ -7,30 +7,10 @@ from enums.Request import STATUS
 from models.Request import DB_Request
 from models.RequestDetail import DB_Request_Detail
 from datetime import datetime
-from enums.Auth import POSITION
-from positions import Hod, Req, Acct
 
 class RequestService:
   def __init__(self):
     pass
-
-  @staticmethod
-  def get_requests(phong_ban: str, chuc_vu: POSITION) -> list[DB_Request]:
-    db = get_db2()
-
-    positions = {
-      POSITION.REQ: Req.REQ,
-      POSITION.HOD: Hod.HOD,
-      POSITION.ACCT: Acct.ACCT,
-    }
-
-    if chuc_vu == POSITION.REQ or chuc_vu == POSITION.HOD:
-      all_requests = positions[chuc_vu].get_requests(phong_ban)
-    else:
-      all_requests = positions[chuc_vu].get_requests()
-
-    db.close()
-    return all_requests
 
   @staticmethod
   def get_requests_with_pr(ma_pr: str) -> list[DB_Request]:
@@ -69,6 +49,13 @@ class RequestService:
     return new_request
   
   @staticmethod
+  def get_request_by_pr(ma_pr: str) -> Optional[DB_Request]:
+    db = get_db2()
+    request = db.query(DB_Request).filter(DB_Request.Ma_PR == ma_pr).first()
+    db.close()
+    return request
+
+  @staticmethod
   def update_request(ma_pr: str, data: M_Request) -> Optional[DB_Request]:
     db = get_db2()
     result = db.query(DB_Request).filter(DB_Request.Ma_PR == ma_pr).update({
@@ -93,17 +80,6 @@ class RequestService:
     return result
   
   @staticmethod
-  def approve(status: str, ma_pr: str):
-    db = get_db2()
-
-    result = db.query(DB_Request).filter(DB_Request.Ma_PR == ma_pr).update({DB_Request.Trang_thai: status})
-    db.query(DB_Request_Detail).filter(DB_Request_Detail.Ma_PR == ma_pr).update({DB_Request_Detail.Trang_thai: status})
-
-    db.commit()
-    db.close()
-    return result
-  
-  @staticmethod
   def update_status(ma_pr: str, status: str):
     db = get_db2()
 
@@ -121,5 +97,12 @@ class RequestService:
     if request.Trang_thai is None:
       db.query(DB_Request).filter(DB_Request.Ma_PR == ma_pr).update({DB_Request.Trang_thai: status})
 
+    db.commit()
+    db.close()
+
+  @staticmethod
+  def update_total_thanh_tien(ma_pr:str, total: int):
+    db = get_db2()
+    result = db.query(DB_Request).filter(DB_Request.Ma_PR == ma_pr).update({DB_Request.Tong_so_tien: total})
     db.commit()
     db.close()
