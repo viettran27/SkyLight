@@ -1,23 +1,27 @@
 from services.request import RequestService
 from schemas.Request import M_Request, M_Request_Approve
-from enums.Request import STATUS_APPROVE, STATUS
 from enums.Auth import POSITION
-from positions import Hod, Req, Acct
+from enums.Request import FILTER
+from positions import Hod, Req, Acct, Ca, Dir
+from config.websocket import manager
+import json
 
 class RequestRepository:
   positions = {
     POSITION.REQ: Req.REQ,
     POSITION.HOD: Hod.HOD,
     POSITION.ACCT: Acct.ACCT,
+    POSITION.CA: Ca.CA,
+    POSITION.DIR: Dir.DIR
   }
   
   @staticmethod
-  def get_requests(phong_ban: str, chuc_vu: POSITION):
+  def get_requests(phong_ban: str, chuc_vu: POSITION, filter: FILTER = None):
 
     if chuc_vu == POSITION.REQ or chuc_vu == POSITION.HOD:
-      all_requests = RequestRepository.positions[chuc_vu].get_requests(phong_ban)
+      all_requests = RequestRepository.positions[chuc_vu].get_requests(phong_ban, filter)
     else:
-      all_requests = RequestRepository.positions[chuc_vu].get_requests()
+      all_requests = RequestRepository.positions[chuc_vu].get_requests(filter)
     return all_requests
   
   @staticmethod
@@ -37,9 +41,13 @@ class RequestRepository:
     return RequestService.delete_request(ma_pr)
   
   @staticmethod
-  def approve(data: M_Request_Approve):
+  async def approve(data: M_Request_Approve):
     status = data.Status
     auth = data.Auth
     ma_pr = data.Ma_PR
 
-    return RequestRepository.positions[auth].approve(ma_pr, status)
+    result = await RequestRepository.positions[auth].approve(ma_pr, status)
+    notifications = RequestRepository.positions[auth].get_notification()
+    await manager.broadcast(json.dumps(notifications))
+
+    return result

@@ -1,12 +1,10 @@
 from typing import Optional
 from db.base import get_db2
-from sqlalchemy import func, and_, cast, Integer
+from sqlalchemy import func, cast, Integer
 from schemas.Request import M_Request
-from enums.Auth import POSITION
-from enums.Request import STATUS
 from models.Request import DB_Request
-from models.RequestDetail import DB_Request_Detail
 from datetime import datetime
+from config.websocket import manager
 
 class RequestService:
   def __init__(self):
@@ -103,6 +101,6 @@ class RequestService:
   @staticmethod
   def update_total_thanh_tien(ma_pr:str, total: int):
     db = get_db2()
-    result = db.query(DB_Request).filter(DB_Request.Ma_PR == ma_pr).update({DB_Request.Tong_so_tien: total})
+    db.query(DB_Request).filter(DB_Request.Ma_PR == ma_pr).update({DB_Request.Tong_so_tien: total})
     db.commit()
     db.close()

@@ -2,12 +2,13 @@ from fastapi import APIRouter
 from repository.request import RequestRepository
 from schemas.Request import M_Request, M_Request_Approve
 from enums.Auth import POSITION 
+from enums.Request import FILTER
 
 router = APIRouter()
 
 @router.get("/")
-def get_requests(phong_ban:str, chuc_vu: POSITION):
-  return RequestRepository.get_requests(phong_ban, chuc_vu)
+def get_requests(phong_ban:str, chuc_vu: POSITION, filter: FILTER = None):
+  return RequestRepository.get_requests(phong_ban, chuc_vu, filter)
 
 @router.get("/search")
 def get_requests_with_pr(ma_pr: str):
@@ -26,7 +27,7 @@ def delete_requests(ma_pr: str):
   return RequestRepository.delete_request(ma_pr)
 
 @router.post("/approve")
-def approve(data: M_Request_Approve):
-  return RequestRepository.approve(data)
+async def approve(data: M_Request_Approve):
+  return await RequestRepository.approve(data)
 
 

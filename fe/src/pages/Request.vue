@@ -1,17 +1,16 @@
 <script setup>
 import { ref, reactive, watch, onMounted, onBeforeUnmount } from 'vue';
 import { useAuthStore } from '@/stores/useAuth';
+import { useFilterStore } from '@/stores/useFilter';
 import { useRouter } from 'vue-router';
 
 import { axiosClient } from '@/lib/axios';
 import { debounce } from 'lodash';
-import { isApprove } from '@/utils';
 import { STATUS_APPROVE } from '@/constants';
 
-import Request from '@/components/decentralization/Request.vue';
-import Approve from '@/components/decentralization/Approve.vue';
-import TableRequest from '@/components/ui-custom/TableRequest.vue';
-import DialogRequest from '@/components/ui-custom/DialogRequest.vue';
+import RequestHeader from '@/components/request/RequestHeader.vue';
+import TableRequest from '@/components/request/TableRequest.vue';
+import DialogRequest from '@/components/request/DialogRequest.vue';
 
 const INIT_REQUEST = {
 	Ten_PR: '',
@@ -28,12 +27,11 @@ const dialog = reactive({
 });
 const requests = ref([]);
 const authStore = useAuthStore();
+const filterStore = useFilterStore()
 
 const getData = () => {
 	axiosClient
-		.get(
-			`/requests?phong_ban=${authStore?.user?.phongban}&chuc_vu=${authStore?.user?.skylight}`,
-		)
+		.get(`/requests?filter=${filterStore?.filter}&phong_ban=${authStore?.user?.phongban}&chuc_vu=${authStore?.user?.skylight}`)
 		.then((data) => {
 			requests.value = data;
 		});
@@ -50,6 +48,11 @@ onBeforeUnmount(() => {
 watch([authStore], () => {
 	if (authStore.user) getData();
 });
+
+watch(() => filterStore.filter, () => {
+	console.log(filterStore.filter)
+	getData()
+})
 
 const handleSearch = (value) => {
 	if (value) {
@@ -146,25 +149,10 @@ const handleReject = (ma_pr) => {
 		<div class="pb-3">
 			<h1 class="text-3xl">Yêu cầu</h1>
 		</div>
-		<Request
+		<RequestHeader
 			:user="authStore?.user"
-			:requests="requests"
 			@open-dialog="handleOpenDialog"
 			@handle-search="handleDebouncedSearch"
-			v-if="
-				authStore?.user?.skylight === 'req' ||
-				authStore?.user?.skylight === 'acct'
-			"
-		/>
-		<Approve
-			:user="authStore?.user"
-			:requests="requests"
-			@get-data="getData"
-			@handle-search="handleDebouncedSearch"
-			v-if="
-				isApprove(authStore?.user?.skylight) &&
-				authStore?.user?.skylight !== 'acct'
-			"
 		/>
 		<div class="bg-white flex-1 pb-3 overflow-auto">
 			<TableRequest

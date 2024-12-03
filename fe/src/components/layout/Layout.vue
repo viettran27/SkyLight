@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import Navbar from './Navbar.vue';
 import Header from './Header.vue';
 
-const openNavbar = ref(false);
+const openNavbar = ref(true);
 
 const toggleNavbar = () => {
 	openNavbar.value = !openNavbar.value;

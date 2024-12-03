@@ -1,12 +1,10 @@
 from fastapi import HTTPException
-from sqlalchemy.orm import Session
 from fastapi.responses import JSONResponse
 from services.auth import AuthService
 from schemas.User import User, UserInfo
 from schemas.Auth import Token
 from config.config import settings
 import datetime
-from enums.Auth import POSITION 
 import jwt
 
 class AuthRepository:
@@ -23,8 +21,8 @@ class AuthRepository:
         if not user:
             return HTTPException(status_code=404, detail="Không tìm thấy nhân viên")
 
-        access_token = AuthRepository.create_jwt_token({"mst": user.masothe, "fac": user.macongty, "type": "access"}, expires_delta=datetime.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
-        refresh_token = AuthRepository.create_jwt_token({"mst": user.masothe,"fac": user.macongty, "type": "refresh"}, expires_delta=datetime.timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS))
+        access_token = AuthRepository.create_jwt_token({"mst": user.masothe, "fac": user.macongty, "position": user.skylight, "type": "access"}, expires_delta=datetime.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
+        refresh_token = AuthRepository.create_jwt_token({"mst": user.masothe,"fac": user.macongty, "position": user.skylight, "type": "refresh"}, expires_delta=datetime.timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS))
         user_info = UserInfo(
             macongty=user.macongty,
             hoten=user.hoten,
@@ -45,7 +43,9 @@ class AuthRepository:
                 raise HTTPException(status_code=400, detail="Invalid token type")
             masothe = decoded_refresh_token.get("mst")
             macongty = decoded_refresh_token.get("fac")
-            access_token = AuthRepository.create_jwt_token({"mst": masothe, "fac": macongty, "type": "access"}, expires_delta=datetime.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
+            macongty = decoded_refresh_token.get("fac")
+            position = decoded_refresh_token.get("position")
+            access_token = AuthRepository.create_jwt_token({"mst": masothe, "fac": macongty, "position": position,"type": "access"}, expires_delta=datetime.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
 
             return JSONResponse(content={"access_token": access_token})
 

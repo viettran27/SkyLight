@@ -1,12 +1,12 @@
 <script setup>
 import { computed } from 'vue';
 import {
-	isApprove,
 	canEditRequest,
 	formatDate,
 	formatISODate,
-	statusFit,
-  viewMoney
+	statusApprove,
+  viewMoney,
+	canOrdered
 } from '@/utils';
 import { Trash, Pencil, X, Check } from 'lucide-vue-next';
 import { POSITION } from '@/constants';
@@ -23,7 +23,6 @@ const emits = defineEmits([
 	'reject',
 ]);
 
-const statusApprove = computed(() => statusFit(user?.skylight));
 const canViewMoney = computed(() => {
     return user?.skylight &&
 		user?.skylight !== POSITION.REQ &&
@@ -46,7 +45,7 @@ const canViewMoney = computed(() => {
 				<TableHead>Tên PR</TableHead>
 				<TableHead>Mục đích</TableHead>
 				<TableHead>Ngày cần</TableHead>
-        <TableHead v-if="canViewMoney">Tông tiền</TableHead>
+        <TableHead v-if="canViewMoney">Tổng tiền</TableHead>
 				<TableHead>Trạng thái</TableHead>
 				<TableHead>Trưởng bộ phận duyệt</TableHead>
 				<TableHead>Kế toán phê duyệt</TableHead>
@@ -58,7 +57,7 @@ const canViewMoney = computed(() => {
 			</TableRow>
 		</TableHeader>
 		<TableBody>
-			<TableRow v-if="value.length === 0">
+			<TableRow v-if="value?.length === 0">
 				<TableCell colspan="11" class="text-center"
 					>Không có yêu cầu nào</TableCell
 				>
@@ -144,10 +143,7 @@ const canViewMoney = computed(() => {
 						</Dialog>
 					</div>
 					<div
-						v-if="
-							isApprove(user?.skylight) &&
-							row.Trang_thai === statusApprove
-						"
+						v-if="statusApprove(user?.skylight, row.Trang_thai)"
 						class="flex gap-2"
 					>
 						<Button
@@ -156,6 +152,13 @@ const canViewMoney = computed(() => {
 							size="sm"
 							><X :size="20"
 						/></Button>
+						<Button @click="$emit('approve', row.Ma_PR)" size="sm"
+							><Check :size="20"
+						/></Button>
+					</div>
+					<div
+						v-if="canOrdered(user?.skylight, row.Trang_thai)"
+					>
 						<Button @click="$emit('approve', row.Ma_PR)" size="sm"
 							><Check :size="20"
 						/></Button>

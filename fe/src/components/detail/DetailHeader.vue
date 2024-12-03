@@ -9,25 +9,18 @@ import {
 	onBeforeUnmount,
 } from 'vue';
 
-import { isApprove } from '@/utils';
+import { statusApprove, canAddDetail, canOrdered } from '@/utils';
 import { STATUS } from '@/constants';
 import { Search, Plus } from 'lucide-vue-next';
 
-const { status } = defineProps({
+const { status, id_pr, user } = defineProps({
 	status: String,
+  id_pr: String,
+  user: Object
 });
-const emit = defineEmits(['handleSearch', 'addDetail']);
+const emit = defineEmits(['handleSearch', 'addDetail', 'approve', 'reject']);
 
-const canAdd = computed(() => {
-	return (
-		!status ||
-		status === STATUS.HOD
-	);
-});
-
-const canApprove = computed(() => {
-  status === STATUS.ACCT_EDIT
-})
+const canAdd = computed(() => canAddDetail(status, id_pr, user));
 </script>
 
 <template>
@@ -50,5 +43,17 @@ const canApprove = computed(() => {
 			<Plus />
 			Thêm mới
 		</Button>
+    <div
+			v-if="statusApprove(user?.skylight, status)"
+			class="flex items-center gap-2"
+		>
+			<Button variant="destructive" @click="$emit('reject')"
+				>Từ chối</Button
+			>
+			<Button @click="$emit('approve')">Chấp nhận</Button>
+		</div>
+		<div v-if="canOrdered(user?.skylight, status)">
+			<Button @click="$emit('approve')">Xác nhận đặt hàng</Button>
+		</div>
 	</div>
 </template>

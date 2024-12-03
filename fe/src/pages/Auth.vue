@@ -30,8 +30,8 @@ const handleLogin = () => {
 	<div
 		class="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-40 flex justify-center items-center"
 	>
-		<div class="bg-white min-w-[600px] rounded-2xl pt-5 pb-16 px-16">
-			<form @submit.prevent="handleLogin" class="flex flex-col gap-7">
+		<div class="bg-white min-w-[300px] md:min-w-[600px] rounded-2xl pt-5 pb-16 px-16">
+			<form @submit.prevent="handleLogin" novalidate class="flex flex-col gap-7">
 				<h1 class="text-center font-bold">Đăng nhập</h1>
 				<div>
 					<label>Nhà máy</label>
@@ -55,6 +55,8 @@ const handleLogin = () => {
 					<label>Mã số thẻ</label>
 					<Input
 						class="mt-1"
+						name="username" 
+						autocomplete="username"
 						v-model="loginValue.masothe"
 						placeholder="Mã số thẻ"
 					/>
@@ -64,6 +66,8 @@ const handleLogin = () => {
 					<label>Mật khẩu</label>
 					<Input
 						class="mt-1"
+						name="current-password"
+						autocomplete="current-password"
 						v-model="loginValue.matkhau"
 						placeholder="Nhập mật khẩu"
 						type="password"

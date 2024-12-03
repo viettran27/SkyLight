@@ -5,13 +5,12 @@ import { useAuthStore } from '@/stores/useAuth';
 import { useRoute } from 'vue-router';
 import { axiosClient } from '@/lib/axios';
 import { debounce } from 'lodash';
-import { isApprove } from '@/utils';
+import { STATUS_APPROVE } from '@/constants';
 
 import { ChevronRight } from 'lucide-vue-next';
-import ApproveDetail from '@/components/decentralization/ApproveDetail.vue';
-import RequestDetail from '@/components/decentralization/RequestDetail.vue';
-import AccountantDetail from '@/components/decentralization/AccountantDetail.vue';
-import DialogDetail from '@/components/ui-custom/DialogDetail.vue';
+import DetailHeader from '@/components/detail/DetailHeader.vue';
+import DialogDetail from '@/components/detail/DialogDetail.vue';
+import TableDetail from '@/components/detail/TableDetail.vue';
 
 const INIT_DIALOG = {
 	Ma_vat_tu: '',
@@ -107,6 +106,30 @@ const handleSaveDialog = async () => {
 	dialog.open = false;
 };
 
+const handleApprove = () => {
+	const data = {
+		Status: STATUS_APPROVE.APPROVED,
+		Ma_PR: id_pr,
+		Auth: authStore?.user?.skylight,
+	};
+
+	axiosClient.post('/requests/approve', data).then(() => {
+		getData();
+	});
+};
+
+const handleReject = () => {
+	const data = {
+		Status: STATUS_APPROVE.REJECTED,
+		Ma_PR: id_pr,
+		Auth: authStore?.user?.skylight,
+	};
+
+	axiosClient.post('/requests/approve', data).then(() => {
+		getData();
+	});
+};
+
 onBeforeUnmount(() => {
 	handleDebouncedSearch.cancel();
 });
@@ -121,31 +144,14 @@ onBeforeUnmount(() => {
 			<ChevronRight />
 			<h1>{{ id_pr }}</h1>
 		</div>
-		<RequestDetail
+		<DetailHeader
       :status="status"
+      :id_pr="id_pr"
+      :user="authStore?.user"
       @add-detail="handleAddDetail"
 			@handle-search="handleDebouncedSearch"
-			v-if="authStore?.user?.skylight === 'req'"
-		/>
-		<ApproveDetail
-			:id_pr="id_pr"
-			:status="status"
-			:user="authStore?.user"
-      @get-data="getData"
-      @add-detail="handleAddDetail"
-			@handle-search="handleDebouncedSearch"
-			v-if="
-				isApprove(authStore?.user?.skylight) &&
-				authStore?.user?.skylight !== 'acct'
-			"
-		/>
-		<AccountantDetail
-			:id_pr="id_pr"
-			:status="status"
-			:user="authStore?.user"
-			@get-data="getData"
-			@handle-search="handleDebouncedSearch"
-			v-if="authStore?.user?.skylight === 'acct'"
+      @approve="handleApprove"
+      @reject="handleReject"
 		/>
 		<div class="bg-white flex-1 pb-3 overflow-auto">
 			<TableDetail

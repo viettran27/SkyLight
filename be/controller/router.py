@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from controller import auth, requests, request_details
+from controller import auth, requests, request_details, notifications
 
 router = APIRouter()
 

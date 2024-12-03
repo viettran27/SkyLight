@@ -4,6 +4,7 @@ import { computed } from 'vue';
 import { useAuthStore } from '@/stores/useAuth';
 import { canEditDetail, viewMoney } from '@/utils';
 import { POSITION } from '@/constants';
+import { axiosClient } from '@/lib/axios';
 
 const { value, id_pr } = defineProps({
 	value: {
@@ -57,7 +58,7 @@ const canViewMoney = computed(() => {
 			</TableRow>
 		</TableHeader>
 		<TableBody>
-			<TableRow v-if="value.length === 0">
+			<TableRow v-if="value?.length === 0">
 				<TableCell colspan="9" class="text-center"
 					>Không có vật tư nào</TableCell
 				>

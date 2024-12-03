@@ -33,7 +33,6 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import TableDetail from '@/components/ui-custom/TableDetail.vue';
 import {
 	Dialog,
 	DialogContent,
@@ -76,7 +75,6 @@ app.component('TableCell', TableCell);
 app.component('TableHead', TableHead);
 app.component('TableHeader', TableHeader);
 app.component('TableRow', TableRow);
-app.component('TableDetail', TableDetail);
 app.component('Dialog', Dialog);
 app.component('DialogContent', DialogContent);
 app.component('DialogDescription', DialogDescription);
