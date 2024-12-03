@@ -7,12 +7,8 @@ from enums.Request import FILTER
 router = APIRouter()
 
 @router.get("/")
-def get_requests(phong_ban:str, chuc_vu: POSITION, filter: FILTER = None):
-  return RequestRepository.get_requests(phong_ban, chuc_vu, filter)
-
-@router.get("/search")
-def get_requests_with_pr(ma_pr: str):
-  return RequestRepository.get_requests_with_pr(ma_pr)
+def get_requests(phong_ban:str, chuc_vu: POSITION, filter: FILTER = None, search: str = None, page: int = 1, per_page: int = 10):
+  return RequestRepository.get_requests(phong_ban, chuc_vu, filter, search, page, per_page)
 
 @router.post("/")
 def create_requests(data: M_Request):

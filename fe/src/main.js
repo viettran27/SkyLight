@@ -44,6 +44,16 @@ import {
 	DialogTrigger,
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  Pagination,
+  PaginationEllipsis,
+  PaginationFirst,
+  PaginationLast,
+  PaginationList,
+  PaginationListItem,
+  PaginationNext,
+  PaginationPrev,
+} from '@/components/ui/pagination'
 
 import router from './router';
 import { createPinia } from 'pinia';
@@ -84,6 +94,14 @@ app.component('DialogTitle', DialogTitle);
 app.component('DialogTrigger', DialogTrigger);
 app.component('DialogClose', DialogClose);
 app.component('Textarea', Textarea);
+app.component('Pagination', Pagination);
+app.component('PaginationEllipsis', PaginationEllipsis);
+app.component('PaginationFirst', PaginationFirst);
+app.component('PaginationLast', PaginationLast);
+app.component('PaginationList', PaginationList);
+app.component('PaginationListItem', PaginationListItem);
+app.component('PaginationNext', PaginationNext);
+app.component('PaginationPrev', PaginationPrev);
 
 app.use(router);
 app.use(pinia);

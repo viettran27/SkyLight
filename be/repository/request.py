@@ -16,17 +16,13 @@ class RequestRepository:
   }
   
   @staticmethod
-  def get_requests(phong_ban: str, chuc_vu: POSITION, filter: FILTER = None):
+  def get_requests(phong_ban: str, chuc_vu: POSITION, filter: FILTER = None, search: str = None, page: int = 1, per_page: int = 10):
 
     if chuc_vu == POSITION.REQ or chuc_vu == POSITION.HOD:
-      all_requests = RequestRepository.positions[chuc_vu].get_requests(phong_ban, filter)
+      all_requests = RequestRepository.positions[chuc_vu].get_requests(phong_ban, filter, search, page, per_page)
     else:
-      all_requests = RequestRepository.positions[chuc_vu].get_requests(filter)
+      all_requests = RequestRepository.positions[chuc_vu].get_requests(filter, search, page, per_page)
     return all_requests
-  
-  @staticmethod
-  def get_requests_with_pr(ma_pr: str):
-    return RequestService.get_requests_with_pr(ma_pr)
 
   @staticmethod
   def create_request(data: M_Request):

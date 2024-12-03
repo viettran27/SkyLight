@@ -1,7 +1,7 @@
 from models.Request import DB_Request
 from models.RequestDetail import DB_Request_Detail
 from db.base import get_db2
-from sqlalchemy import and_
+from sqlalchemy import text
 from enums.Request import STATUS, STATUS_APPROVE, FILTER
 from datetime import datetime
 
@@ -10,34 +10,71 @@ class HOD:
     pass
 
   @staticmethod
-  def get_requests(phong_ban: str, filter: FILTER = None):
+  def get_requests(phong_ban: str, filter: FILTER = None, search: str = None, page: int = 1, per_page: int = 10):
     db = get_db2()
     
     filters = {
-        FILTER.ALL: [
-            DB_Request.Phong_ban == phong_ban,
-            DB_Request.Trang_thai.isnot(None),
-        ],
-        FILTER.APPROVED: [
-            DB_Request.Phong_ban == phong_ban,
-            DB_Request.Trang_thai != STATUS.HOD.value,
-        ],
-        FILTER.NOT_APPROVE: [
-            DB_Request.Phong_ban == phong_ban,
-            DB_Request.Trang_thai == STATUS.HOD.value,
-        ],
+      FILTER.ALL: [
+        "Phong_ban = :phong_ban",
+        "Trang_thai IS NOT NULL",
+      ],
+      FILTER.APPROVED: [
+        "Phong_ban = :phong_ban",
+        f"Trang_thai <> N'{STATUS.HOD.value}'",
+      ],
+      FILTER.NOT_APPROVE: [
+        "Phong_ban = :phong_ban",
+        f"Trang_thai = N'{STATUS.HOD.value}'",
+      ],
     }
 
     default_condition = [
-      DB_Request.Phong_ban == phong_ban,
-      DB_Request.Trang_thai == filter.value if filter else None,
+      "Phong_ban = :phong_ban",
+      f"Trang_thai = N'{filter.value}'",
     ]
 
     filter_conditions = filters.get(filter, default_condition)
-    result = db.query(DB_Request).filter(and_(*filter_conditions)).all()
+
+    if search:
+      filter_conditions.append(f"Ten_PR LIKE N'%{search}%'")
+
+    filter_condition = " AND ".join(filter_conditions)
+
+    start_row = (page - 1) * per_page + 1
+    end_row = page * per_page
+
+    query = f"""
+      SELECT * FROM (
+          SELECT 
+              ROW_NUMBER() OVER (ORDER BY Thoi_gian_yeu_cau DESC) AS RowNum, * 
+          FROM PR
+          WHERE {filter_condition}
+      ) AS RowConstrainedResult
+      WHERE RowNum BETWEEN :start_row AND :end_row
+    """
+
+    params = {
+      "phong_ban": phong_ban,
+      "start_row": start_row,
+      "end_row": end_row,
+    }
+
+    result = db.execute(text(query), params).fetchall()
+
+    total_query = f"""
+      SELECT COUNT(*) FROM PR
+      WHERE {filter_condition}
+    """
+    total_records = db.execute(text(total_query), params).scalar()
 
     db.close()
-    return result
+
+    return {
+      "data": [dict(row._mapping) for row in result],
+      "total": total_records,
+      "current_page": page,
+      "per_page": per_page
+    }
   
   @staticmethod
   async def approve(ma_pr:str, status: STATUS_APPROVE):

@@ -11,13 +11,6 @@ class RequestService:
     pass
 
   @staticmethod
-  def get_requests_with_pr(ma_pr: str) -> list[DB_Request]:
-    db = get_db2()
-    all_requests = db.query(DB_Request).filter(func.lower(DB_Request.Ma_PR).like(f"%{ma_pr.lower()}%")).all()
-    db.close()
-    return all_requests
-
-  @staticmethod
   def create_request(data: M_Request) -> Optional[DB_Request]:
     db = get_db2()
 

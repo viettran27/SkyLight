@@ -19,7 +19,7 @@ const filterStore = useFilterStore();
 					id="search"
 					type="text"
 					@input="$emit('handleSearch', $event.target.value)"
-					placeholder="Nhập tên mã PR"
+					placeholder="Nhập tên PR"
 					class="pl-10"
 				/>
 				<span
@@ -36,7 +36,7 @@ const filterStore = useFilterStore();
 					<SelectGroup>
 						<SelectItem :value="FILTER.ALL">Tất cả</SelectItem>
 						<SelectItem :value="FILTER.NOT_APPROVE">Chưa duyệt</SelectItem>
-						<SelectItem v-if="user?.skylight === POSITION.REQ" :value="FILTER.APPROVED">Đã duyệt</SelectItem>
+						<SelectItem v-if="user?.skylight !== POSITION.REQ" :value="FILTER.APPROVED">Đã duyệt</SelectItem>
 						<SelectItem 
 							:value="FILTER.ACCT" 
 							v-if="user?.skylight !== POSITION.HOD && 
