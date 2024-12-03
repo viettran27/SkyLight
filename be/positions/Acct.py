@@ -21,9 +21,11 @@ class ACCT:
       FILTER.APPROVED: [
         f"Trang_thai <> N'{STATUS.HOD.value}'",
         f"Trang_thai <> N'{STATUS.ACCT.value}'",
+        f"Trang_thai <> N'{STATUS.DIR_ACPT.value}'",
       ],
       FILTER.NOT_APPROVE: [
-        f"Trang_thai <> N'{STATUS.ACCT.value}'",
+        f"Trang_thai = N'{STATUS.ACCT.value}'",
+        f"Trang_thai = N'{STATUS.DIR_ACPT.value}'",
       ],
     }
 
@@ -33,10 +35,14 @@ class ACCT:
 
     filter_conditions = filters.get(filter, default_condition)
 
+    if filter == FILTER.NOT_APPROVE:
+      filter_condition = " OR ".join(filter_conditions)
+    
+    else:
+      filter_condition = " AND ".join(filter_conditions)
+    
     if search:
-      filter_conditions.append("Ten_PR LIKE N'%{search}%'")
-
-    filter_condition = " AND ".join(filter_conditions)
+      filter_condition = f"({filter_condition}) AND Ten_PR LIKE N'%{search}%'"
 
     start_row = (page - 1) * per_page + 1
     end_row = page * per_page
@@ -55,7 +61,7 @@ class ACCT:
       "start_row": start_row,
       "end_row": end_row,
     }
-
+    print(query)
     result = db.execute(text(query), params).fetchall()
 
     total_query = f"""

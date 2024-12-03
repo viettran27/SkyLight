@@ -4,7 +4,6 @@ from sqlalchemy import func, cast, Integer
 from schemas.Request import M_Request
 from models.Request import DB_Request
 from datetime import datetime
-from config.websocket import manager
 
 class RequestService:
   def __init__(self):

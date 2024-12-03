@@ -15,11 +15,12 @@ class CA:
 
     filters = {
       FILTER.ALL: [
-        f"Trang_thai = N'{STATUS.CA.value}",
+        f"Trang_thai = N'{STATUS.CA.value}'",
         f"Trang_thai = N'{STATUS.CA_RJ.value}'",
         f"Trang_thai = N'{STATUS.REQ_ACPT.value}'",
         f"Trang_thai = N'{STATUS.DIR.value}'",
         f"Trang_thai = N'{STATUS.ACCT_ORDERED.value}'",
+        f"Trang_thai = N'{STATUS.DIR_ACPT.value}'"
       ],
       FILTER.APPROVED: [
         f"Trang_thai = N'{STATUS.DIR.value}'",
